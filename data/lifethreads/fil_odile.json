@@ -1,0 +1,89 @@
+{
+  "id": "fil_odile",
+  "version": 1,
+  "title": "Odile, l'horlogère",
+  "region": "montagne",
+  "unlock": { "node": "abri_col", "min_stars": 2 },
+  "cast": [
+    { "id": "odile", "name": "Odile Brun", "node": "abri_col", "becomes_resident": true },
+    { "id": "paul", "name": "Paul Brun", "node": "delta_quai" }
+  ],
+  "steps": [
+    {
+      "id": "s1_ressorts", "from": "station", "to": "odile",
+      "cargo": { "item": "ressorts_pendule", "kg": 6, "fragile": true },
+      "deadline_days": 2,
+      "teaser": "Un petit paquet lourd pour sa taille. Ça cliquette.",
+      "note": "Je répare les pendules du Col. Ici, le temps s'arrête trop souvent. Merci, porteur. O.",
+      "curious_hint": "Une photo glissée dans la commande : un jeune homme sur un quai du Delta.",
+      "effects": [{ "op": "add", "key": "likes", "value": 12 }],
+      "on_fail": { "note": "Encore une pendule arrêtée. Tant pis.", "delay_days": 1 }
+    },
+    {
+      "id": "s2_montre", "from": "odile", "to": "paul",
+      "cargo": { "item": "montre_gravee", "kg": 2, "fragile": true },
+      "deadline_days": 4,
+      "teaser": "Odile a écrit l'adresse trois fois avant de choisir la bonne.",
+      "note": "Remonte-la chaque matin. Moi, je fais pareil avec la mienne. Maman.",
+      "curious_hint": "Gravé au dos : « P., 6 h 12 ».",
+      "on_fail": { "note": "Paul n'a rien reçu. Odile renvoie une autre montre, moins belle.", "delay_days": 2 }
+    },
+    {
+      "id": "s3_retour", "from": "paul", "to": "odile",
+      "cargo": { "item": "montre_gravee", "kg": 2, "fragile": true },
+      "deadline_days": 4,
+      "teaser": "La même montre, arrêtée à 6 h 12. Pas de lettre.",
+      "note": "Pas de mot. Juste la montre, arrêtée.",
+      "choice": {
+        "id": "c_mot",
+        "prompt": "Glisser un mot de la station dans le colis ?",
+        "options": [
+          { "id": "sans_mot", "label": "Livrer tel quel" },
+          { "id": "avec_mot", "label": "Ajouter : « Il l'a gardée longtemps. »",
+            "effects": [{ "op": "add", "key": "trust.odile", "value": 1 }] }
+        ]
+      },
+      "on_fail": { "note": "Odile apprend par la radio que le colis s'est perdu. Elle attend.", "delay_days": 2 }
+    },
+    {
+      "id": "s4_cassette", "from": "station", "to": "odile",
+      "cargo": { "item": "piles_cassette", "kg": 3 },
+      "deadline_days": 1,
+      "teaser": "Odile commande de quoi faire marcher un vieux magnétophone.",
+      "note": "Je veux enregistrer ma voix. Au cas où le temps s'arrête pour moi aussi.",
+      "curious_hint": "Elle a demandé la marque exacte du magnétophone de Paul, il y a vingt ans.",
+      "on_fail": { "note": "Elle écrit sa lettre à la main, à la place.", "delay_days": 1 }
+    },
+    {
+      "id": "s5_voix", "from": "odile", "to": "paul",
+      "cargo": { "item": "cassette_odile", "kg": 1, "fragile": true },
+      "deadline_days": 4,
+      "teaser": "Une cassette, un ruban rose, et la montre remontée.",
+      "note": "Paul écoute, puis écrit au dos du bordereau.",
+      "on_fail": { "note": "La cassette est abîmée. Paul n'entend que la moitié.", "delay_days": 0 }
+    }
+  ],
+  "ending": {
+    "default": {
+      "note": "Elle avance de 4 minutes. Comme maman. Je monte au Col dimanche.",
+      "resident": "odile",
+      "facility": {
+        "id": "horlogerie", "name": "Horlogerie",
+        "effects": [{ "op": "add", "key": "gear_wear_pct", "value": -15 }]
+      },
+      "effects": [
+        { "op": "unlock", "key": "item.montre_odile", "value": true },
+        { "op": "add", "key": "likes", "value": 120 }
+      ]
+    },
+    "by_choice": {
+      "avec_mot": {
+        "note": "Elle avance de 4 minutes. Comme maman. Merci à la station pour le mot. Je monte au Col dimanche.",
+        "effects": [
+          { "op": "unlock", "key": "item.montre_odile_gravee", "value": true },
+          { "op": "add", "key": "likes", "value": 150 }
+        ]
+      }
+    }
+  }
+}

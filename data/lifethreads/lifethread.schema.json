@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "porter-story/lifethread.schema.json",
+  "title": "Fil de vie",
+  "description": "Un fil de vie : suite de colis à ruban qui fait venir un résident nommé. Entiers attendus : Godot les lit en float, convertir au chargement.",
+  "type": "object",
+  "required": ["id", "version", "title", "region", "unlock", "cast", "steps", "ending"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "$ref": "#/$defs/id" },
+    "version": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string", "description": "Nom affiché dans le Carnet de vies" },
+    "region": { "$ref": "#/$defs/id" },
+    "unlock": {
+      "type": "object",
+      "required": ["node", "min_stars"],
+      "additionalProperties": false,
+      "properties": {
+        "node": { "$ref": "#/$defs/id", "description": "Lieu dont la liaison déclenche le fil" },
+        "min_stars": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "requires_threads": { "type": "array", "items": { "$ref": "#/$defs/id" }, "description": "Fils à compléter avant (fils croisés)" },
+        "endless_only": { "type": "boolean", "default": false }
+      }
+    },
+    "cast": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "node"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "name": { "type": "string" },
+          "node": { "$ref": "#/$defs/id" },
+          "becomes_resident": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "steps": {
+      "type": "array", "minItems": 3, "maxItems": 6,
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "ending": {
+      "type": "object",
+      "required": ["default"],
+      "additionalProperties": false,
+      "properties": {
+        "default": { "$ref": "#/$defs/ending_variant" },
+        "by_choice": {
+          "type": "object",
+          "description": "Clé = id d'option ; remplace les champs de default",
+          "additionalProperties": { "$ref": "#/$defs/ending_variant" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "effect": {
+      "type": "object",
+      "required": ["op", "key", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "enum": ["add", "set", "unlock"] },
+        "key": { "type": "string", "description": "Ex. likes, trust.odile, item.montre_odile" },
+        "value": { "type": ["integer", "boolean", "string"] }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "from", "to", "cargo", "deadline_days", "teaser", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "from": { "$ref": "#/$defs/id", "description": "Id du cast ou 'station'" },
+        "to": { "$ref": "#/$defs/id" },
+        "cargo": {
+          "type": "object",
+          "required": ["item", "kg"],
+          "additionalProperties": false,
+          "properties": {
+            "item": { "$ref": "#/$defs/id" },
+            "kg": { "type": "integer", "minimum": 1 },
+            "fragile": { "type": "boolean", "default": false }
+          }
+        },
+        "deadline_days": { "type": "integer", "minimum": 1 },
+        "teaser": { "type": "string", "description": "Texte avant ouverture, 1 phrase" },
+        "note": { "type": "string", "description": "Mot lu à la livraison, 2 phrases max" },
+        "curious_hint": { "type": "string", "description": "Indice rapporté par un porteur Curieux" },
+        "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } },
+        "choice": {
+          "type": "object",
+          "required": ["id", "prompt", "options"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/id" },
+            "prompt": { "type": "string" },
+            "options": {
+              "type": "array", "minItems": 2, "maxItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "label"],
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "label": { "type": "string" },
+                  "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+                }
+              }
+            }
+          }
+        },
+        "on_fail": {
+          "type": "object",
+          "description": "Colis perdu ou en retard : le fil continue",
+          "required": ["note", "delay_days"],
+          "additionalProperties": false,
+          "properties": {
+            "note": { "type": "string" },
+            "delay_days": { "type": "integer", "minimum": 0 },
+            "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+          }
+        }
+      }
+    },
+    "ending_variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "note": { "type": "string" },
+        "resident": { "$ref": "#/$defs/id", "description": "Id du cast qui s'installe" },
+        "facility": {
+          "type": "object",
+          "required": ["id", "name"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/id" },
+            "name": { "type": "string" },
+            "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+          }
+        },
+        "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+      }
+    }
+  }
+}

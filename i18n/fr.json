@@ -1,0 +1,8 @@
+{
+	"app.title": "Porter Story",
+	"clock.day": "Jour %d",
+	"clock.morning": "Matin",
+	"clock.evening": "Soir",
+	"clock.paused": "Pause",
+	"clock.speed": "x%d"
+}

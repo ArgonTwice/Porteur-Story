@@ -1,29 +1,8 @@
-## godot --headless --path . -s tests/test_lifethread_catalog.gd   (code retour 1 si échec)
-extends SceneTree
+extends "res://tests/test_base.gd"
 
 const Catalog := preload("res://src/sim/lifethread_catalog.gd")
 const Run := preload("res://src/sim/lifethread_run.gd")
 const DIR := "res://data/lifethreads"
-
-var _fails := 0
-var _checks := 0
-
-
-func _init() -> void:
-	test_load_dir()
-	test_available()
-	test_gus_tutorial()
-	test_cross_thread()
-	test_link_errors()
-	print("%d vérifications, %d échec(s)" % [_checks, _fails])
-	quit(1 if _fails else 0)
-
-
-func check(cond: bool, what: String) -> void:
-	_checks += 1
-	if not cond:
-		_fails += 1
-		printerr("ÉCHEC : " + what)
 
 
 func catalog() -> Catalog:

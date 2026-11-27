@@ -1,30 +1,8 @@
-## godot --headless --path . -s tests/test_lifethreads.gd   (code retour 1 si échec)
-extends SceneTree
+extends "res://tests/test_base.gd"
 
 const Loader := preload("res://src/sim/lifethread_loader.gd")
 const Run := preload("res://src/sim/lifethread_run.gd")
 const ODILE := "res://data/lifethreads/fil_odile.json"
-
-var _fails := 0
-var _checks := 0
-
-
-func _init() -> void:
-	test_load_odile()
-	test_path_avec_mot()
-	test_path_sans_mot()
-	test_failures_do_not_block()
-	test_bad_option_is_refused()
-	test_loader_rejects()
-	print("%d vérifications, %d échec(s)" % [_checks, _fails])
-	quit(1 if _fails else 0)
-
-
-func check(cond: bool, what: String) -> void:
-	_checks += 1
-	if not cond:
-		_fails += 1
-		printerr("ÉCHEC : " + what)
 
 
 func odile() -> Dictionary:

@@ -1,0 +1,68 @@
+{
+  "id": "fil_gus",
+  "version": 1,
+  "title": "Gus, les bottes au clou",
+  "region": "plaines",
+  "unlock": { "node": "relais_nord", "min_stars": 1 },
+  "cast": [
+    { "id": "gus", "name": "Gus Marot", "node": "relais_nord", "becomes_resident": true }
+  ],
+  "steps": [
+    {
+      "id": "s1_conserves", "from": "station", "to": "gus",
+      "cargo": { "item": "conserves", "kg": 8 },
+      "deadline_days": 3,
+      "teaser": "Huit kilos de conserves, toutes de la même marque.",
+      "note": "Je ne sors plus. Laissez ça devant la porte. G.",
+      "curious_hint": "Une paire de bottes de porteur pend à sa fenêtre, lacets neufs.",
+      "effects": [{ "op": "add", "key": "likes", "value": 5 }],
+      "on_fail": { "note": "Rien devant la porte. Il mange ce qui reste.", "delay_days": 1 }
+    },
+    {
+      "id": "s2_bottes", "from": "gus", "to": "station",
+      "cargo": { "item": "bottes_usees", "kg": 3 },
+      "deadline_days": 3,
+      "teaser": "Une paire de bottes, ressemelées trois fois.",
+      "note": "Elles marchent encore. Donnez-les à quelqu'un qui part.",
+      "choice": {
+        "id": "c_bottes",
+        "prompt": "Que faire des bottes de Gus ?",
+        "options": [
+          { "id": "donner_lena", "label": "Les donner à Léna",
+            "effects": [{ "op": "add", "key": "trust.lena", "value": 1 }] },
+          { "id": "atelier", "label": "Les ranger à l'atelier",
+            "effects": [{ "op": "add", "key": "materials", "value": 5 }] }
+        ]
+      },
+      "on_fail": { "note": "Les bottes ne sont jamais arrivées. Gus dit qu'il s'en doutait.", "delay_days": 1 }
+    },
+    {
+      "id": "s3_plan", "from": "station", "to": "gus",
+      "cargo": { "item": "plan_station", "kg": 1 },
+      "deadline_days": 3,
+      "teaser": "Le plan de la station, avec une case vide marquée « G ».",
+      "note": "Une case vide, hein. J'arrive demain, avec mes vieilles jambes.",
+      "on_fail": { "note": "Le plan est trempé. Gus vient voir par lui-même.", "delay_days": 0 }
+    }
+  ],
+  "ending": {
+    "default": {
+      "note": "Gus pose son sac au dortoir et regarde l'atelier sans rien dire.",
+      "resident": "gus",
+      "facility": {
+        "id": "cordonnerie", "name": "Cordonnerie",
+        "effects": [{ "op": "add", "key": "boots_wear_pct", "value": -10 }]
+      },
+      "effects": [{ "op": "add", "key": "likes", "value": 40 }]
+    },
+    "by_choice": {
+      "donner_lena": {
+        "note": "Gus voit les bottes aux pieds de Léna. « Elles ont trouvé quelqu'un. » Il pose son sac.",
+        "effects": [
+          { "op": "unlock", "key": "item.bottes_gus", "value": true },
+          { "op": "add", "key": "likes", "value": 50 }
+        ]
+      }
+    }
+  }
+}

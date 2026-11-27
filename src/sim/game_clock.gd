@@ -33,6 +33,7 @@ func cycle_speed() -> void:
 	speed = SPEEDS[(SPEEDS.find(speed) + 1) % SPEEDS.size()]
 
 
+@warning_ignore("integer_division")
 func day() -> int: ## jour courant, à partir de 1
 	return half_day / 2 + 1
 
